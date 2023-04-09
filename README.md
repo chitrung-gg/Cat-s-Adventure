@@ -39,9 +39,9 @@ The game have the following features:
 - Step 2: Install the MinGW compiler and then put the directory address in System Path
 - Step 3: Download the source code from this repository
 - Step 4: Install the SDL2 libraries (including SDL2, SDL2_image, SDL2_ttf, SDL2_mixer)
-    - Copy all the headers of SDL2 (for example: SDL.h) into the include/sdl folder
-    - Copy all the libraries of SDL2 (cmake, pkgconfig, libSDL2) into the lib folder
-    - Copy all the SDL dll files into the main folder
+    - Copy all the headers of SDL2 (for example: SDL.h) into the sdl folder (which should be created in include folder)
+    - Copy all the libraries of SDL2 (cmake, pkgconfig, libSDL2) into the lib folder (which should be created in main directory)
+    - Copy all the SDL dll files into the main directory
 - Step 5: Open the terminal, and enter this command (without space): mingw32-make -f MakeFile
 - Step 6: After complied successfully, you will the an executable file named "main.exe" and you can open this file to play the game!
 
