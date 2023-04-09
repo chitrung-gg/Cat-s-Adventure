@@ -1,18 +1,18 @@
 # SDL2_C++_Game_Project
-***
+
 A non-commercial game which made by SDL2 and C++
 
 # Introduce
-***
+
 - This game is a simple endless-runner game,  written in C++ programming language with SDL graphic libraries (https://www.libsdl.org/)
 - Name of the game: Cat's Adventure
 
 # Description
-***
+
 In a beautiful day, you became a cat and got up in a totally strange area. After a moment for calming down, you decided to find ways to come home. Nevertheless, in the ways there are a lot of obstacles, and with your determination, you need to overcome it!
 
 # Play Guides 
-***
+
 - Use SPACE button or UP ARROW button to jump above the obstacles in the ways
 - Be careful, because the speed of these objects'speed will be increased after a certain period since the game started
 - Your score will be increased overtime, unless your character collides with one of these objects. If this happens, you will lose.
@@ -20,7 +20,7 @@ In a beautiful day, you became a cat and got up in a totally strange area. After
 - Have fun!
 
 # Function
-***
+
 The game have the following features:
 - Play: Start the game
 - Pause: You can pause the game if you want to take a break
@@ -32,7 +32,7 @@ The game have the following features:
 - Quit: End the game
 
 # Installation
-***
+
 ***Note***: This game is only tested in Windows environment and is compiled by Visual Studio Code
 
 - Step 1: Download Visual Studio Code from Microsoft page
@@ -46,12 +46,12 @@ The game have the following features:
 - Step 6: After complied successfully, you will the an executable file named "main.exe" and you can open this file to play the game!
 
 # Credits
-***
+
 - This project is made by Nguyen Chi Trung
 - Game assets are available free use by various developers:
     - itch.io
  
 # Licenses
-***
+
 - This is the free and non-commercial game project
 - Pull requests are welcome.
