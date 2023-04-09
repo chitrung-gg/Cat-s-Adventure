@@ -13,7 +13,7 @@ using namespace std;
 const int REPEAT_SOUND = -1;
 const int NOT_REPEAT_SOUND = 0;
 const int CHUNK_CHANNEL = -1;
-const string WINDOW_TITLE = "Ganyuuu's Game!";
+const string WINDOW_TITLE = "Cat's Adventure";
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 576;
 
