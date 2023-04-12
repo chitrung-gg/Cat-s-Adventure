@@ -4,8 +4,9 @@ A non-commercial game which made by SDL2 and C++
 
 # Introduce
 
-- This game is a simple endless-runner game,  written in C++ programming language with SDL graphic libraries (https://www.libsdl.org/)
+- This game is a simple endless-runner game,  written in C++ programming language with [SDL graphic libraries](https://www.libsdl.org/)
 - Name of the game: Cat's Adventure
+
 
 # Description
 
@@ -19,6 +20,8 @@ In a beautiful day, you became a cat and got up in a totally strange area. After
 - Your score and highscore is displayed in the above-right corner
 - Have fun!
 
+# Demo
+- [Game_Demo](https://drive.google.com/file/d/11lWaq1ICbnSnKHswAEDkf54NpZyXpzB8/view?usp=sharing)
 # Function
 
 The game have the following features:
@@ -30,6 +33,7 @@ The game have the following features:
 - Return: When you click the highscore button / about button, you can return to the main menu by pressing the return one
 - Replay: If you lose, you can choose to replay without returning to menu
 - Quit: End the game
+
 
 # Installation
 
@@ -47,11 +51,15 @@ The game have the following features:
 
 # Credits
 
-- This project is made by Nguyen Chi Trung
+- This project is made by [Chi Trung](https://github.com/chitrung-gg)
 - Game assets are available free use by various developers:
-    - itch.io
+    - Itch.io
+    - Craftpix.net
+    - Gameart2d.com
+    - Fontspace.com
+
  
 # Licenses
 
-- This is the free and non-commercial game project
-- Pull requests are welcome.
+- This is a free and non-commercial game project
+
