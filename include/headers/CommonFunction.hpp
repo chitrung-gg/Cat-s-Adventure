@@ -24,13 +24,22 @@ const int COLOR_KEY_B = 0xff;
 const int RENDER_DRAW_COLOR = 0xff;
 
 const int BACKGROUND_LAYER = 4;
+const int BACKGROUND_TYPE = 4;
 const int GROUND_LAYER = 1;
-const string LAYER [BACKGROUND_LAYER] 
+const string LAYER [BACKGROUND_TYPE][BACKGROUND_LAYER] 
 {
-    "res/background/4/0.png",
-    "res/background/4/1.png",
-    "res/background/4/2.png",
-    "res/background/4/3.png"
+    {"res/background/1/0.png", "res/background/1/1.png", "res/background/1/2.png", "res/background/1/3.png"},
+    {"res/background/2/0.png", "res/background/2/1.png", "res/background/2/2.png", "res/background/2/3.png"},
+    {"res/background/3/0.png", "res/background/3/1.png", "res/background/3/2.png", "res/background/3/3.png"},
+    {"res/background/4/0.png", "res/background/4/1.png", "res/background/4/2.png", "res/background/4/3.png"}
+};
+
+const string LAYER_GROUND[BACKGROUND_TYPE]
+{
+    "res/background/1/4.png", 
+    "res/background/2/4.png",
+    "res/background/3/4.png",
+    "res/background/4/4.png"
 };
 
 const int PLAYER_RUNNING_LAYER = 8;
@@ -45,9 +54,9 @@ const float LAYER_GROUND_SPEED = 2;
 const int FPS = 60;
 
 #define PLAYER_POS_X 100
-#define GROUND 445
-#define MAX_JUMP 10
-#define FALL_SPEED 0.5
+#define GROUND 455
+#define MAX_JUMP 15
+#define FALL_SPEED 0.675
 #define INIT_SPEED 0
 
 

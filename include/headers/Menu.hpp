@@ -31,12 +31,12 @@ class Menu
         void RenderPlayButton(SDL_Event &event, bool &play_, bool &menu_quit_, Button &play_button_, SDL_Renderer *des, Mix_Chunk *click_wav_);
         void RenderPauseButton(SDL_Event &event, bool &is_pause_, Button &pause_button_, SDL_Renderer *des, Mix_Chunk *click_wav_);
         void RenderUnpauseButton(SDL_Event &event, bool &is_pause_, Button &play_button_, SDL_Renderer *des, Mix_Chunk *click_wav_);
-        void RenderExitButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, Button &exit_button_, SDL_Renderer *des, Mix_Chunk *click_wav_);
-        void RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, Button &return_button_, Button &information_button_, Object &information_menu_,/*Object &information_sheet_,*/ SDL_Renderer *des, Mix_Chunk *click_wav_);
-        void RenderHighScoreButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, Button &return_button_, Button &highscore_button_, Object &highscore_bkg_, Object &highscore_text_, Mechanism mechanism_, TTF_Font *font, SDL_Color textColor, SDL_Renderer *des, Mix_Chunk *click_wav_);
+        void RenderExitButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, bool &play_, bool &end_lose_, Button &exit_button_, SDL_Renderer *des, Mix_Chunk *click_wav_);
+        void RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, bool &play_, bool &end_lose_, Button &return_button_, Button &information_button_, Object &information_menu_, /*Object &information_sheet_*/ SDL_Renderer *des, Mix_Chunk *click_wav_);
+        void RenderHighScoreButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, bool &play_, bool &end_lose_, Button &return_button_, Button &highscore_button_, Object &highscore_bkg_, Object &highscore_text_, Mechanism mechanism_, TTF_Font *font, SDL_Color textColor, SDL_Renderer *des, Mix_Chunk *click_wav_);
         void RenderMuteButton(SDL_Event &event, Button &mute_button_, bool &mute_, SDL_Renderer *des, Mix_Chunk *click_wav_);
         void RenderUnmuteButton(SDL_Event &event, Button &unmute_button_, bool &mute_, SDL_Renderer *des, Mix_Chunk *click_wav_);
-        void RenderReplayButton(SDL_Event &event, Button &replay_button_, Button &return_button_, bool &menu_quit_, bool &play_, bool &is_paused_, bool &is_running_, Object &o_notification_, SDL_Renderer *des, Mix_Chunk *click_wav_);
+        void RenderReplayButton(SDL_Event &event, Button &replay_button_, Button &return_button_, bool &menu_quit_, bool &play_, bool &end_lose_, Mix_Chunk *click_wav_);
 
     private:
 
