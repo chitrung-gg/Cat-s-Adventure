@@ -6,23 +6,25 @@
 #include "Timer.hpp"
 #include "Button.hpp"
 #include "Menu.hpp"
+#include "Health.hpp"
+#include "Speed.hpp"
 
 SDL_Window *gWindow = nullptr;
 SDL_Renderer *gRenderer = nullptr;
-//SDL_Event gEvent;  
-SDL_Color gTextColor = {0xff, 0xff, 0xff};
+SDL_Color gTextColor = {97, 178, 181};
 TTF_Font *gFont = nullptr;
 Mix_Music *gMusic = nullptr;
 Mix_Chunk *gJump = nullptr;
+Mix_Chunk *gCollide = nullptr;
 Mix_Chunk *gLose = nullptr;
 Mix_Chunk *gSelect = nullptr;
 
 Object gMenuImg;
 Object gInformation;
 Object gHighScoreImg;
-Object gBackground[BACKGROUND_LAYER];
+Object gBackground[BACKGROUND_TYPE][BACKGROUND_LAYER];
 Object gLoseGame;
-Object gGround;
+Object gGround[BACKGROUND_TYPE];
 Object gScore;
 Object gHighScore;
 
@@ -30,28 +32,25 @@ Button gPlayButton;
 Button gPauseButton;
 Button gHighscoresButton;
 Button gInformationButton;
-//Button gSettingsButton;
 Button gExitButton;
 Button gReplayButton;
 Button gMusicEnable;
 Button gMusicDisable;
-//Button gSoundEffectsEnable;
-//Button gSoundEffectsDisable;
 Button gReturnButton;
 
 Player gCharacter;
 
 Enemy gAir0(AIR_ENEMY_TYPE);
-Enemy gAir1(AIR_ENEMY_TYPE);
+//Enemy gAir1(AIR_ENEMY_TYPE);
 Enemy gGround0(GROUND_ENEMY_TYPE);
 Enemy gGround1(GROUND_ENEMY_TYPE);
-Enemy gGround2(GROUND_ENEMY_TYPE);
-Enemy gGround3(GROUND_ENEMY_TYPE);
+
+Health gHeart;
+Speed gSpeed;
 
 Timer gTimer;
 Mechanism gMechanism;
 Menu gMenu;
-
 
 bool Init()             // khoi tao thong so cho moi truong SDL
 {
@@ -158,6 +157,13 @@ bool LoadMedia()
         return false;
     }
 
+    gCollide = Mix_LoadWAV("res/sound/Collide.wav");
+    if (gCollide == nullptr)
+    {
+        cout << "Failed to load collide sound!" << endl;
+        return false;
+    }
+
     if (!gPlayButton.LoadImg("res/button/Play.png", gRenderer))
     {
         cout << "Failed to load play button! " << endl;
@@ -176,12 +182,6 @@ bool LoadMedia()
         return false;
     }
 
-    // if (!gSettingsButton.LoadImg("res/button/Settings.png", gRenderer))
-    // {
-    //     cout << "Failed to load settings button" << endl;
-    //     return false;
-    // }
-
     if (!gExitButton.LoadImg("res/button/Exit.png", gRenderer))
     {
         cout << "Failed to load exit button" << endl;
@@ -194,6 +194,18 @@ bool LoadMedia()
         return false;
     }
 
+    if (!gHeart.LoadImg("res/heart/Heart.png", gRenderer))
+    {
+        cout << "Failed to load heart image" << endl;
+        return false;
+    }
+
+    if (!gSpeed.LoadImg("res/acceleration/speed.png", gRenderer))
+    {
+        cout << "Failed to load speed image" << endl;
+        return false;
+    }
+
     else
     {
         if (!gLoseGame.LoadImg("res/menu/notification.png", gRenderer))
@@ -202,19 +214,26 @@ bool LoadMedia()
             return false;
         }
 
-        for (int i = 0; i < BACKGROUND_LAYER; i++)
+        for (int i = 0; i < BACKGROUND_TYPE; i++)
         {
-            if (gBackground[i].LoadImg(LAYER[i].c_str(), gRenderer) == false)
+            for (int j = 0; j < BACKGROUND_LAYER; j++)
             {
-                cout << "Failed to load background " << i << endl;
-                return false;
-            }   
+                if (!gBackground[i][j].LoadImg(LAYER[i][j].c_str(), gRenderer))
+                {
+                    cout << "Failed to load background " << i << endl;
+                    return false;
+                }   
+            }
+            
         }
 
-        if (!gGround.LoadImg("res/background/4/4.png", gRenderer))
+        for (int i = 0; i < BACKGROUND_TYPE; i++)
         {
-            cout << "Failed to load ground " << endl;
-            return false;
+            if (!gGround[i].LoadImg(LAYER_GROUND[i].c_str(), gRenderer))
+            {
+                cout << "Failed to load ground " << endl;
+                return false;
+            }
         }
 
         gFont = TTF_OpenFont("fonts/NiceSugar.ttf", 35);
@@ -223,18 +242,6 @@ bool LoadMedia()
             cout << "Failed to load font! " << endl;
             return false;
         }
-
-        // if (!gScore.LoadRenderedText("Your score: ", gFont, gTextColor, gRenderer))
-        // {
-        //     cout << "Failed to render current score " << endl;
-        //     return false;
-        // }
-
-        // if (!gHighScore.LoadRenderedText("High score: ", gFont, gTextColor, gRenderer))
-        // {
-        //     cout << "Failed to render high score" << endl;
-        //     return false;
-        // }
 
         if (!gPauseButton.LoadImg("res/button/Pause.png",gRenderer))
         {
@@ -266,17 +273,20 @@ bool LoadMedia()
             return false;
         }
 
-        if (!(gAir0.LoadImg("res/enemy/Helicopter.png", gRenderer) && gAir1.LoadImg("res/enemy/Vulture.png", gRenderer)))
+        if (!(gAir0.LoadImg("res/enemy/Helicopter.png", gRenderer) /*&& gAir1.LoadImg("res/enemy/Vulture.png", gRenderer)*/))
         {
             cout << "Failed to load air enemies" << endl;
             return false;
         }
 
-        if (!(gGround0.LoadImg("res/enemy/Cactus.png", gRenderer) && gGround1.LoadImg("res/enemy/Double_Cactus.png", gRenderer) && gGround2.LoadImg("res/enemy/Mummy.png", gRenderer) && gGround3.LoadImg("res/enemy/Scorpio.png", gRenderer)))
+        if (!(gGround0.LoadImg("res/enemy/Cactus.png", gRenderer) && gGround1.LoadImg("res/enemy/Mummy.png", gRenderer)))
         {
             cout << "Failed to load ground enemies" << endl;
             return false;
         }
+
+
+        
     }
 
     return true;
@@ -288,42 +298,48 @@ void close()
     Mix_FreeChunk(gLose);
     Mix_FreeChunk(gSelect);
     Mix_FreeChunk(gJump);
+    Mix_FreeChunk(gCollide);
     gMusic = nullptr;
     gJump = nullptr;
     gSelect = nullptr;
     gLose = nullptr;
+    gCollide = nullptr;
 
     gPlayButton.Free();
     gPauseButton.Free();
     gHighscoresButton.Free();
     gInformationButton.Free();
-    // gSettingsButton.Free();
     gExitButton.Free();
     gReplayButton.Free();
     gMusicEnable.Free();
     gMusicDisable.Free();
-    // gSoundEffectsEnable.Free();
-    // gSoundEffectsDisable.Free();
     gReturnButton.Free();
 
     gCharacter.Free();
 
     gAir0.Free();
-    gAir1.Free();
+    //gAir1.Free();
     gGround0.Free();
     gGround1.Free();
-    gGround2.Free();
-    gGround3.Free();
     
-    for (int i = 0; i < BACKGROUND_LAYER; i++)
+    for (int i = 0; i < BACKGROUND_TYPE; i++)
     {
-        gBackground[i].Free();
+        for (int j = 0; j < BACKGROUND_LAYER; j++)
+        {
+            gBackground[i][j].Free();
+        }
     }
-    gGround.Free();
+
+    for (int i = 0; i < BACKGROUND_TYPE; i++)
+    {
+        gGround[i].Free();
+    }
     gMenuImg.Free();
     gInformation.Free();
     gScore.Free();
     gHighScore.Free();
+    gHeart.Free();
+    gSpeed.Free();
 
     TTF_CloseFont(gFont);
     gFont = nullptr;
@@ -359,6 +375,7 @@ int main(int argc, char *argv[])
     bool menu_quit_ = false;
     bool play_ = false;
     bool mute_ = false;
+    bool end_lose_ = false;
 
     while (!is_quit_)
     {
@@ -373,13 +390,13 @@ int main(int argc, char *argv[])
             SDL_RenderClear(gRenderer);
 
             gMenuImg.Render(gRenderer);
-            gPlayButton.SetPosition(PLAY_BUTTON_POS_X, PLAYBUTTON_POS_Y);
+            gPlayButton.SetPosition(PLAY_BUTTON_POS_X, PLAY_BUTTON_POS_Y);
             gHighscoresButton.SetPosition(HIGHSCORES_BUTTON_POS_X, HIGHSCORES_BUTTON_POS_Y);
             gMusicEnable.SetPosition(MUSIC_ENABLE_BUTTON_POS_X, MUSIC_ENABLE_BUTTON_POS_Y);
             gMusicDisable.SetPosition(MUSIC_DISABLE_BUTTON_POS_X, MUSIC_DISABLE_BUTTON_POS_Y);
             gInformationButton.SetPosition(INFORMATION_BUTTON_POS_X, INFORMATION_BUTTON_POS_Y);
             gExitButton.SetPosition(EXIT_BUTTON_POS_X, EXIT_BUTTON_POS_Y);
-            gReturnButton.SetPosition(RETURN_BUTTON_POS_X, RETURN_BUTTON_POS_Y);
+            gReturnButton.SetPosition(MENU_RETURN_BUTTON_POS_X, MENU_RETURN_BUTTON_POS_Y);
 
             SDL_Event menu_event_;
 
@@ -389,11 +406,13 @@ int main(int argc, char *argv[])
                 {
                     is_quit_ = true;
                     menu_quit_ = true;
+                    play_ = false;
+                    end_lose_ = true;
                 }
                 
                 gMenu.RenderPlayButton(menu_event_, play_, menu_quit_, gPlayButton, gRenderer, gSelect);
-                gMenu.RenderHighScoreButton(menu_event_, is_quit_, menu_quit_, gReturnButton, gHighscoresButton, gHighScoreImg, gHighScore, gMechanism, gFont, gTextColor, gRenderer, gSelect);
-                gMenu.RenderInformationButton(menu_event_, is_quit_, menu_quit_, gReturnButton, gInformationButton, gInformation, gRenderer, gSelect);
+                gMenu.RenderHighScoreButton(menu_event_, is_quit_, menu_quit_, play_, end_lose_, gReturnButton, gHighscoresButton, gHighScoreImg, gHighScore, gMechanism, gFont, gTextColor, gRenderer, gSelect);
+                gMenu.RenderInformationButton(menu_event_, is_quit_, menu_quit_, play_, end_lose_, gReturnButton, gInformationButton, gInformation, gRenderer, gSelect);
                 if (mute_)
                 {
                     gMenu.RenderUnmuteButton(menu_event_, gMusicEnable, mute_, gRenderer, gSelect);
@@ -402,7 +421,7 @@ int main(int argc, char *argv[])
                 {
                     gMenu.RenderMuteButton(menu_event_, gMusicDisable, mute_, gRenderer, gSelect); 
                 }
-                gMenu.RenderExitButton(menu_event_, is_quit_, menu_quit_, gExitButton, gRenderer, gSelect);
+                gMenu.RenderExitButton(menu_event_, is_quit_, menu_quit_, play_, end_lose_, gExitButton, gRenderer, gSelect);
             }
 
             gPlayButton.RenderButton(gRenderer);
@@ -433,33 +452,35 @@ int main(int argc, char *argv[])
             gPlayButton.SetPosition(PAUSE_BUTTON_POS_X, PAUSE_BUTTON_POS_Y);
             gMusicEnable.SetPosition(MUSIC_ENABLE_BUTTON_POS_X, MUSIC_ENABLE_BUTTON_POS_Y);
             gMusicDisable.SetPosition(MUSIC_DISABLE_BUTTON_POS_X, MUSIC_DISABLE_BUTTON_POS_Y);
-            gReturnButton.SetPosition(RETURN_BUTTON_POS_X, RETURN_BUTTON_POS_Y);
-            gReplayButton.SetPosition(128, 322);
+            gReturnButton.SetPosition(GAME_RETURN_BUTTON_POS_X, GAME_RETURN_BUTTON_POS_Y);
+            gReplayButton.SetPosition(REPLAY_BUTTON_POS_X, REPLAY_BUTTON_POS_Y);
             
             srand(time(nullptr));
-            int time = 0, score = 0, speed = 0, acceleration = 0;
+            int time = 0, score = 0, speed = 0;
+            float acceleration = 0;
+            int num_collision = 0, cnt_collision = 0;
+            int background_type = rand() % (BACKGROUND_TYPE);
 
             gTimer.Start();
 
             gCharacter.SetRect(PLAYER_POS_X, GROUND);
 
+            gGround1.GenerateEnemy();
             gAir0.GenerateEnemy();
             gGround0.GenerateEnemy();
-            gGround1.GenerateEnemy();
-            gAir1.GenerateEnemy();
-            gGround2.GenerateEnemy();
-            gGround3.GenerateEnemy();
+            
+            //gAir1.GenerateEnemy();
+
+            gHeart.Init(gRenderer);
+            gSpeed.Init(gRenderer);
 
             SDL_Event play_event_;
             vector<float> speed_layer_(BACKGROUND_LAYER, INIT_SPEED);
             bool is_running_ = true, is_lose_ = false, is_paused_ = false;
+            end_lose_ = false;
 
             while (is_running_)
             {
-                if (!mute_)
-                {
-                    Mix_PlayMusic(gMusic, REPEAT_SOUND);
-                }
                 while (SDL_PollEvent(&play_event_))
                 {
                     if (play_event_.type == SDL_QUIT)
@@ -467,15 +488,17 @@ int main(int argc, char *argv[])
                         is_running_ = false;
                         is_quit_ = true;
                         play_ = false;
+                        menu_quit_ = true;
+                        end_lose_ = true;
                     }
 
                     if (mute_)
                     {
-                        gMenu.RenderUnmuteButton(play_event_, gMusicEnable, mute_, gRenderer, gSelect);
+                        gMenu.RenderUnmuteButton(play_event_, gMusicEnable, mute_, gRenderer, gSelect);   
                     }
                     else
                     {
-                        gMenu.RenderMuteButton(play_event_, gMusicDisable, mute_, gRenderer, gSelect); 
+                        gMenu.RenderMuteButton(play_event_, gMusicDisable, mute_, gRenderer, gSelect);
                     }
 
                     if (!is_paused_)
@@ -494,17 +517,12 @@ int main(int argc, char *argv[])
                             gTimer.Start();
                         }
                     }
-
-                    if (is_lose_)
-                    {
-                        gMenu.RenderReplayButton(play_event_, gReplayButton, gReturnButton, menu_quit_, play_, is_running_, is_paused_, gLoseGame, gRenderer, gSelect);
-                    }
                 }
 
                 if ((!is_lose_) && (!is_paused_))
                 {
-                    gMechanism.RenderScrollingBackground(speed_layer_, acceleration, gBackground, gRenderer);
-                    gMechanism.RenderScrollingGround(speed, acceleration, gGround, gRenderer);
+                    gMechanism.RenderScrollingBackground(speed_layer_, acceleration, gBackground[background_type], gRenderer);
+                    gMechanism.RenderScrollingGround(speed, acceleration, gGround[background_type], gRenderer);
 
                     if (mute_)
                     {
@@ -515,10 +533,18 @@ int main(int argc, char *argv[])
                         gMusicDisable.RenderButton(gRenderer);
                     }
 
+                    gHeart.Show(gRenderer);
+                    
+                    gSpeed.Move(gRenderer);
+                    gSpeed.Show(gRenderer);
+
                     gPauseButton.RenderButton(gRenderer);
 
                     gCharacter.DoPlayer();
                     gCharacter.Show(is_lose_, gRenderer);
+
+                    gGround1.Move(acceleration);
+                    gGround1.Show(gRenderer);
 
                     gAir0.Move(acceleration);
                     gAir0.Show(gRenderer);
@@ -526,17 +552,8 @@ int main(int argc, char *argv[])
                     gGround0.Move(acceleration);
                     gGround0.Show(gRenderer);
 
-                    gGround2.Move(acceleration);
-                    gGround2.Show(gRenderer);
-
-                    gAir1.Move(acceleration);
-                    gAir1.Show(gRenderer);
-
-                    gGround1.Move(acceleration);
-                    gGround1.Show(gRenderer);
-
-                    gGround3.Move(acceleration);
-                    gGround3.Show(gRenderer);
+                    // gAir1.Move(acceleration);
+                    // gAir1.Show(gRenderer);
 
                     gMechanism.DrawScore(gScore, gTimer, gRenderer, gFont, gTextColor, time, acceleration, score);
                     gMechanism.DrawHighScore(gHighScore, gRenderer, gFont, gTextColor);
@@ -557,121 +574,84 @@ int main(int argc, char *argv[])
 
                 }
 
-                if (gMechanism.CheckCollision(gCharacter, gAir0) || gMechanism.CheckCollision(gCharacter, gAir1) || gMechanism.CheckCollision(gCharacter, gGround0) || gMechanism.CheckCollision(gCharacter, gGround1) || gMechanism.CheckCollision(gCharacter, gGround2) || gMechanism.CheckCollision(gCharacter, gGround3))
+                for (int i = 0; i < gSpeed.GetAccelerate().size(); i++)
                 {
-                    gTimer.Pause();
-                    if (!is_lose_)
+                    if (gMechanism.CheckAccelerationCollision(gCharacter, gSpeed, i))
                     {
-                        Mix_PauseMusic();
-                        Mix_PlayChannel(CHUNK_CHANNEL, gLose, NOT_REPEAT_SOUND);
+                        gSpeed.DecreaseAccelerate(acceleration, i);
                     }
-                    gMechanism.DrawLoseGame(play_, is_running_, is_lose_, gRenderer);
                 }
-                
-                if (is_lose_)
+        
+                if ((gMechanism.CheckCollision(gCharacter, gAir0) || gMechanism.CheckCollision(gCharacter, gGround0) /*|| gMechanism.CheckCollision(gCharacter, gAir1) */|| gMechanism.CheckCollision(gCharacter, gGround1)))
                 {
-                    gReturnButton.RenderButton(gRenderer);
-                    gReplayButton.RenderButton(gRenderer);
-                }
+                    cnt_collision++;
+                    
+                    if (cnt_collision % 15 == 0) 
+                    {
+                        num_collision++;
+                        cout << 'a' << " " << cnt_collision << " " << num_collision << endl;
 
+                        if (num_collision <= 3)
+                        {
+                            Mix_PlayChannel(CHUNK_CHANNEL, gCollide, NOT_REPEAT_SOUND);
+                            gHeart.DecreaseHeart();
+                            gHeart.Show(gRenderer);
+                        }
+
+                        // else 
+                        // {
+                        //     gTimer.Pause();
+                        //     if (!is_lose_)
+                        //     {
+                        //         Mix_PauseMusic();
+                        //         Mix_PlayChannel(CHUNK_CHANNEL, gLose, NOT_REPEAT_SOUND);
+                        //     }
+                        //     gMechanism.UpdateHighScore(score, "res/highscore.txt");
+                        //     gMechanism.ChangeGameState(play_, is_running_, is_lose_, gLoseGame, gRenderer); 
+                        //     break;
+                        // }
+
+                    }
+                    
+                }
                 SDL_RenderPresent(gRenderer);
                 gMechanism.ControlFPS(gTimer);
             }
+        }
+
+        while (!end_lose_)
+        {
+            SDL_Event lose_event_;
+            while (SDL_PollEvent(&lose_event_))
+            {
+                if (lose_event_.type == SDL_QUIT)
+                {
+                    is_quit_ = true;
+                    end_lose_ = true;
+                    menu_quit_ = true;
+                    play_ = false;
+                }
+
+                if (mute_)
+                {
+                    gMenu.RenderUnmuteButton(lose_event_, gMusicEnable, mute_, gRenderer, gSelect);   
+                }
+                else
+                {
+                    gMenu.RenderMuteButton(lose_event_, gMusicDisable, mute_, gRenderer, gSelect);
+                }
+                
+                gMenu.RenderReplayButton(lose_event_, gReplayButton, gReturnButton, menu_quit_, play_, end_lose_, gSelect);
+
+            }
+
+            gLoseGame.RenderPos(190, 100, gRenderer);
+            gReturnButton.RenderButton(gRenderer);
+            gReplayButton.RenderButton(gRenderer);
             
-            
+            SDL_RenderPresent(gRenderer);
         }
     }
-
-
-    
-    // 
-    
-    // while (!is_quit)
-    // {
-    //     
-    //     // Truoc khi load anh se load lai mau, xoa man di set anh moi
-    //     gCharacter.SetRect(PLAYER_POS_X, GROUND);
-    //     gTimer.Start();
-    //     //gStartButton.SetPosition(235, 300);
-        
-    //     //Mix_PlayChannel(-1, gLose, 0);
-    //     while (SDL_PollEvent(&gEvent))
-    //     {
-    //         if (gEvent.type == SDL_QUIT)
-    //         {
-    //             is_quit = true;
-    //         }
-    //         gCharacter.HandleInputAction(gEvent);
-            
-    //         if (gEvent.type == SDL_KEYDOWN)
-    //         {
-    //             switch (gEvent.key.keysym.sym)
-    //             {
-    //             case SDLK_ESCAPE:
-    //                 /* code */
-                    
-    //                 if (gTimer.IsPaused())
-    //                 {
-    //                     gTimer.Unpause();
-    //                 }
-    //                 else 
-    //                 {
-    //                     gTimer.Pause();
-    //                 }
-                    
-    //                 break;
-                
-    //             default:
-    //                 break;
-    //             }
-    //         }
-    //         //gStartButton.HandleAction(gEvent);
-    //     }
-        
-    //     gMechanism.RenderScrollingBackground(offsetSpeed, gBackground, gRenderer);
-    //     gMechanism.RenderScrollingGround(speed, acceleration, gGround, gRenderer); 
-    //     //gText.RenderPos(20, 300, gRenderer);
-        
-    //     gCharacter.DoPlayer();
-    //     //gCharacter.Show(gRenderer);
-
-    //     gAir0.Move(acceleration);
-    //     //gAir0.Show(gRenderer);
-
-    //     gGround0.Move(acceleration);
-    //     //gGround0.Show(gRenderer);
-
-    //     gGround1.Move(acceleration);
-    //     //gGround1.Show(gRenderer);
-
-    //     gAir1.Move(acceleration);
-    //     //gAir1.Show(gRenderer);
-
-    //     gGround2.Move(acceleration);
-    //     //gGround2.Show(gRenderer);
-
-    //     gGround3.Move(acceleration);
-    //     //gGround3.Show(gRenderer);
-        
-    //     //gStartButton.RenderButton(gRenderer);
-    //     // gCharacter.Show(gRenderer);
-    //     // gAir0.Show(gRenderer);
-    //     // gGround0.Show(gRenderer);
-    //     // gGround1.Show(gRenderer);
-    //     // gAir1.Show(gRenderer);
-    //     // gGround2.Show(gRenderer);
-    //     // gGround3.Show(gRenderer);
-        
-
-    //     if (gMechanism.CheckCollision(gCharacter, gAir0))
-    //     {
-    //         cout << "Found air0 obstacle!" << endl;
-    //     }
-    //     gMechanism.DrawScore(gScore, gTimer, gRenderer, gFont, gTextColor, time, acceleration, score);
-        
-    //     // Update lai man hinh
-        
-    // }
 
     close();
     return 0;

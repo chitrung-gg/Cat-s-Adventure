@@ -95,7 +95,7 @@ void Menu::RenderUnpauseButton(SDL_Event &event, bool &is_pause_, Button &play_b
     }
 }
 
-void Menu::RenderExitButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, Button &exit_button_, SDL_Renderer *des, Mix_Chunk *click_wav_)
+void Menu::RenderExitButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, bool &play_, bool &end_lose_, Button &exit_button_, SDL_Renderer *des, Mix_Chunk *click_wav_)
 {
     if (exit_button_.IsInside(event))
     {
@@ -112,6 +112,8 @@ void Menu::RenderExitButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, 
             Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
             is_quit_ = true;
             menu_quit_ = true;
+            play_ = false;
+            end_lose_ = true;
             break;
         }
         default:
@@ -124,7 +126,7 @@ void Menu::RenderExitButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, 
     }
 }
 
-void Menu::RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, Button &return_button_, Button &information_button_, Object &information_menu_, /*Object &information_sheet_*/ SDL_Renderer *des, Mix_Chunk *click_wav_)
+void Menu::RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, bool &play_, bool &end_lose_, Button &return_button_, Button &information_button_, Object &information_menu_, /*Object &information_sheet_*/ SDL_Renderer *des, Mix_Chunk *click_wav_)
 {
     if (information_button_.IsInside(event))
     {
@@ -150,6 +152,8 @@ void Menu::RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_
                         information_ = true;
                         is_quit_ = true;
                         menu_quit_ = true;
+                        play_ = false;
+                        end_lose_ = true;
                         return;
                     }   
 
@@ -175,7 +179,7 @@ void Menu::RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_
                     }
                 }
                 
-                information_menu_.RenderPos(188, 185, des);
+                information_menu_.RenderPos(190, 175, des);
                 return_button_.RenderButton(des);
 
                 SDL_RenderPresent(des);
@@ -193,7 +197,7 @@ void Menu::RenderInformationButton(SDL_Event &event, bool &is_quit_, bool &menu_
 }
 
 
-void Menu::RenderHighScoreButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, Button &return_button_, Button &highscore_button_, Object &highscore_bkg_, Object &highscore_text_, Mechanism mechanism_, TTF_Font *font, SDL_Color textColor, SDL_Renderer *des, Mix_Chunk *click_wav_)
+void Menu::RenderHighScoreButton(SDL_Event &event, bool &is_quit_, bool &menu_quit_, bool &play_, bool &end_lose_, Button &return_button_, Button &highscore_button_, Object &highscore_bkg_, Object &highscore_text_, Mechanism mechanism_, TTF_Font *font, SDL_Color textColor, SDL_Renderer *des, Mix_Chunk *click_wav_)
 {
     if (highscore_button_.IsInside(event))
     {
@@ -219,6 +223,8 @@ void Menu::RenderHighScoreButton(SDL_Event &event, bool &is_quit_, bool &menu_qu
                         highscore_ = true;
                         is_quit_ = true;
                         menu_quit_ = true;
+                        play_ = false;
+                        end_lose_ = true;
                         return;
                     }
                     
@@ -244,9 +250,9 @@ void Menu::RenderHighScoreButton(SDL_Event &event, bool &is_quit_, bool &menu_qu
                     }
                 }
                 
-                highscore_bkg_.RenderPos(200, 185, des);
+                highscore_bkg_.RenderPos(180, 165, des);
                 highscore_text_.LoadRenderedText(mechanism_.GetHighScore("res/highscore.txt"), font, textColor, des);
-                highscore_text_.RenderPos(500, 300, des);
+                highscore_text_.RenderPos(475, 300, des);
                 return_button_.RenderButton(des);
 
                 SDL_RenderPresent(des);
@@ -278,10 +284,7 @@ void Menu::RenderMuteButton(SDL_Event &event, Button &mute_button_, bool &mute_,
         {
             mute_button_.SetMouseState(CLICK);
             mute_ = true;
-            if (!mute_) 
-            {
-                Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
-            }
+            Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
             Mix_PauseMusic();
             break;
         }
@@ -310,10 +313,7 @@ void Menu::RenderUnmuteButton(SDL_Event &event, Button &unmute_button_, bool &mu
         {
             unmute_button_.SetMouseState(CLICK);
             mute_ = false;
-            if (!mute_)
-            {
-                Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
-            }
+            Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
             Mix_ResumeMusic();
             break;
         }
@@ -327,10 +327,8 @@ void Menu::RenderUnmuteButton(SDL_Event &event, Button &unmute_button_, bool &mu
     }
 }
 
-void Menu::RenderReplayButton(SDL_Event &event, Button &replay_button_, Button &return_button_, bool &menu_quit_, bool &play_, bool &is_paused_, bool &is_running_, Object &o_notification_, SDL_Renderer *des, Mix_Chunk *click_wav_)
+void Menu::RenderReplayButton(SDL_Event &event, Button &replay_button_, Button &return_button_, bool &menu_quit_, bool &play_, bool &end_lose_, Mix_Chunk *click_wav_)
 {
-    o_notification_.RenderPos(200, 185, des);
-
     if (return_button_.IsInside(event))
     {
         switch (event.type)
@@ -344,10 +342,9 @@ void Menu::RenderReplayButton(SDL_Event &event, Button &replay_button_, Button &
         {
             return_button_.SetMouseState(CLICK);
             Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
+            end_lose_ = true;
             menu_quit_ = false;
-            play_ = false;
-            is_paused_ = false;
-            is_running_ = false;
+            //play_ = false;
             break;
         }
         default:
@@ -372,9 +369,9 @@ void Menu::RenderReplayButton(SDL_Event &event, Button &replay_button_, Button &
         {
             replay_button_.SetMouseState(CLICK);
             Mix_PlayChannel(CHUNK_CHANNEL, click_wav_, NOT_REPEAT_SOUND);
-            play_ = false;
-            is_paused_ = false;
-            menu_quit_ = false;
+            end_lose_ = true;
+            play_ = true;
+            //menu_quit_ = true;
             break;
         }
         default:

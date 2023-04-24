@@ -38,7 +38,6 @@ void Timer::Pause()
     {
         is_paused_ = true;
 
-        cout << "Paused!" << endl;
         paused_ticks_ = SDL_GetTicks() - start_ticks_;
         start_ticks_ = 0;
     }

@@ -114,7 +114,7 @@ void Player::UpdateImagePlayer(bool &is_lose_, SDL_Renderer *des)
 void Player::Show(bool &is_lose_, SDL_Renderer *des)
 {
     UpdateImagePlayer(is_lose_, des);
-    
+
     player_object_.w = frame_clip_[frame_].w;
     player_object_.h = frame_clip_[frame_].h;
 

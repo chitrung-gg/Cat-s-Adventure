@@ -90,144 +90,112 @@ bool Enemy::LoadImg(string path, SDL_Renderer *screen)
     return load;
 }
 
+// bool Enemy::CheckEnemyCollision(Enemy &enemy_1_, Enemy &enemy_2_)
+// {
+//     if (SDL_HasIntersection(&enemy_1_.GetEnemyObject(), &enemy_2_.GetEnemyObject())) return true;
+// }
+
+void Enemy::AddEnemy(int &x_pos_)
+{
+    enemy_spawn_.push_back(x_pos_);
+}
+
 void Enemy::GenerateEnemy()
 {
-    //int time_ = 0;
-
+    enemy_object_.x = rand() % (ENEMY_RANGE + SCREEN_WIDTH - 400) + SCREEN_WIDTH;
     if (e_type_ == AIR_ENEMY_TYPE)
     {
-        enemy_object_.y = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 5) + ENEMY_MIN_HEIGHT;  //random tọa độ y
-        if (e_air_ == HELICOPTER)                                                                 // loại enemy
-        {
+        enemy_object_.y = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;  
+        // if (e_air_ == HELICOPTER)                                                                 
+        // {
+        //     enemy_object_.x = ENEMY_POSITION_MIN_HELICOPTER + SCREEN_WIDTH;
+        // }
 
-
-            enemy_object_.x = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;                       // random tọa độ x
-            // if (enemy_object_.x - enemy_pos_[VULTURE] < ENEMY_POSITION_RANGE)                     // kiểm tra có trùng với enemy khác 
-
-            // {                                                                                     // enemy_object_ có kiểu dữ liệu SDL_Rect
-            //     enemy_object_.x = ENEMY_POSITION_RANGE + enemy_pos_[VULTURE];                     // biến enemy_pos_ có kiểu dữ liệu map
-            // }
-            // enemy_pos_[e_air_] = enemy_object_.x;
-            
-
-        }
-
-        else if (e_air_ == VULTURE)
-        {
-            // while (time_ <= 50)
-            // {
-            //     time_++;
-            //     if (time_ == 50)
-            //     {
-                    enemy_object_.x = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-                    // if (enemy_object_.x - enemy_pos_[HELICOPTER] < ENEMY_POSITION_RANGE)
-                    // {
-                    //     enemy_object_.x = ENEMY_POSITION_RANGE + enemy_pos_[HELICOPTER];
-                    // }
-                    // enemy_pos_[e_air_] = enemy_object_.x;
-            //         time_ = 0;
-            //         break;
-            //     }
-            // }
-
-        }
+        // else if (e_air_ == VULTURE)
+        // {
+        //     enemy_object_.x = ENEMY_POSITION_MIN_VULTURE + SCREEN_WIDTH;
+        // }
     }
+
     else if (e_type_ == GROUND_ENEMY_TYPE)
     {
-        enemy_object_.y = GROUND;
+        enemy_object_.y = GROUND + 5;
 
-        if (e_ground_ == CACTUS)
-        {
-            // while (time_ <= 25)
-            // {
-            //     time_++;
-            //     if (time_ == 25)
-            //     {
-                    enemy_object_.x = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-            //         if (enemy_object_.x - enemy_pos_[DOUBLE_CACTUS] < ENEMY_POSITION_RANGE)
-            //         {
-            //             enemy_object_.x = ENEMY_POSITION_RANGE + enemy_pos_[DOUBLE_CACTUS];
-            //         }
-            //         enemy_pos_[e_ground_] = enemy_object_.x;
-            // //         time_ = 0;
-            //         break;
-            //     }
-            // }
-        }
+        // if (e_ground_ == CACTUS)
+        // {
+        //     enemy_object_.x = ENEMY_POSITION_MIN_CACTUS + SCREEN_WIDTH;
+        // }
 
-        else if (e_ground_ == DOUBLE_CACTUS)
-        {
-            // while (time_ <= 50)
-            // {
-            //     time_++;
-            //     if (time_ == 50)
-            //     {
-                    enemy_object_.x = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-                    // if (enemy_object_.x - enemy_pos_[MUMMY] < ENEMY_POSITION_RANGE)
-                    // {
-                    //     enemy_object_.x = ENEMY_POSITION_RANGE + enemy_pos_[MUMMY];
-                    // }
-                    // enemy_pos_[e_ground_] = enemy_object_.x;
-            //         time_ = 0;
-            //         break;
-            //     }
-            // }
-        }
-
-        else if (e_ground_ == MUMMY)
-        {
-            // while (time_ <= 75)
-            // {
-            //     time_++;
-            //     if (time_ == 75)
-            //     {
-                    enemy_object_.x = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-                    // if (enemy_object_.x - enemy_pos_[SCORPIO] < ENEMY_POSITION_RANGE)
-                    // {
-                    //     enemy_object_.x = ENEMY_POSITION_RANGE + enemy_pos_[SCORPIO];
-                    // }
-                    // enemy_pos_[e_ground_] = enemy_object_.x;
-            //         time_ = 0;
-            //         break;
-            //     }
-            // }
-        }
-
-        else if (e_ground_ == SCORPIO)
-        {
-            // while (time_ <= 100)
-            // {
-            //     time_++;
-            //     if (time_ == 100)
-            //     {
-                    enemy_object_.x = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-                    // if (enemy_object_.x - enemy_pos_[CACTUS] < ENEMY_POSITION_RANGE)
-                    // {
-                    //     enemy_object_.x = ENEMY_POSITION_RANGE + enemy_pos_[CACTUS];
-                    // }
-                    // enemy_pos_[e_ground_] = enemy_object_.x;
-            //         time_ = 0;
-            //         break;
-            //     }
-            // }
-        }
+        // else if (e_ground_ == MUMMY)
+        // {
+        //     enemy_object_.x = ENEMY_POSITION_MIN_MUMMY + SCREEN_WIDTH;
+        // }
     }
 
-//   SDL_Delay(5);
+    AddEnemy(enemy_object_.x);
 }
 
 void Enemy::Move(const int &accelerate)
 {
-    enemy_object_.x += -(ENEMY_SPEED + accelerate);
-    if (enemy_object_.x + enemy_object_.w <= 0)
+    if (e_type_ == AIR_ENEMY_TYPE)
     {
-        enemy_object_.x = rand() % (ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-
-        if (e_type_ == AIR_ENEMY_TYPE)
+        if (e_air_ == HELICOPTER)
         {
-            enemy_object_.y = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 5) + ENEMY_MIN_HEIGHT;
+            enemy_object_.x += - (ENEMY_SPEED + accelerate);
+        }
+        else if (e_air_ == VULTURE)
+        {
+            enemy_object_.x += - 2 * (ENEMY_SPEED + accelerate);
         }
     }
+
+    else if (e_type_ == GROUND_ENEMY_TYPE)
+    {
+        if (e_ground_ == CACTUS)
+        {
+            enemy_object_.x += - (ENEMY_SPEED + accelerate);
+        }
+        else if (e_ground_ == MUMMY)
+        {
+            enemy_object_.x += - (ENEMY_SPEED + accelerate);
+        }
+    }
+    
+    if (enemy_object_.x + enemy_object_.w < 0)
+    {
+        enemy_object_.x = rand() % (ENEMY_RANGE + SCREEN_WIDTH - 500) + SCREEN_WIDTH;
+        if(e_type_ == AIR_ENEMY_TYPE)
+        {   
+            enemy_object_.y = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;
+            // if (e_air_ == HELICOPTER)
+            // {
+            //     enemy_object_.x = ENEMY_POSITION_MIN_HELICOPTER + SCREEN_WIDTH;
+            // }
+            // else if (e_air_ == VULTURE)
+            // {    
+            //     enemy_object_.x = ENEMY_POSITION_MIN_VULTURE + SCREEN_WIDTH;
+            // } 
+        }
+
+        else if (e_type_ == GROUND_ENEMY_TYPE)
+        {
+            // if (e_ground_ == CACTUS)
+            // {
+            //     enemy_object_.x = ENEMY_POSITION_MIN_CACTUS + SCREEN_WIDTH;
+            // }
+            // else if (e_ground_ == MUMMY)
+            // {
+            //     enemy_object_.x = ENEMY_POSITION_MIN_MUMMY + SCREEN_WIDTH;
+            // }
+        }
+    }
+
+    AddEnemy(enemy_object_.x);
+}
+
+void Enemy::Ignore()
+{
+    enemy_spawn_.pop_back();
 }
 
 void Enemy::Show(SDL_Renderer *des)
@@ -239,7 +207,7 @@ void Enemy::Show(SDL_Renderer *des)
 
         while (true)
         {
-            if (block_sprites_ % 5 == 0)
+            if (block_sprites_ % 6 == 0)
             {
                 id_frame_++;
             }
@@ -263,7 +231,7 @@ void Enemy::Show(SDL_Renderer *des)
         enemy_object_.w = frame_clip_[id_frame_].w;
         enemy_object_.h = frame_clip_[id_frame_].h;
 
-        if (e_ground_ != CACTUS && e_ground_ != DOUBLE_CACTUS)
+        if (e_ground_ != CACTUS)
         {
             while (true)
             {
@@ -286,9 +254,7 @@ void Enemy::Show(SDL_Renderer *des)
 
         SDL_RenderCopy(des, p_object_, &frame_clip_[id_frame_], &enemy_object_);
     }
-
 }
-
 
 int Enemy::GetEnemyType()
 {
