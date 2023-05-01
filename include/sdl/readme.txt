@@ -1,1 +1,2 @@
-Download all SDL headers and paste to this folder
+- Copy all the headers of SDL2 (for example: SDL.h) into this folder
+- After that, delete this readme.txt file to ensure compatibility
