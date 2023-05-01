@@ -48,7 +48,7 @@ void Speed::Show(SDL_Renderer *des)
     for (int i = 0; i < accelerate_pos_list_.size(); i++)
     {
         rect_.x = accelerate_pos_list_.at(i);
-        rect_.y = GROUND + 5;
+        rect_.y = GROUND - 90;
         Object::RenderPos(rect_.x, rect_.y, des);
     }
 }
@@ -57,7 +57,7 @@ void Speed::Move(SDL_Renderer *des)
 {
     for (int i = 0; i < accelerate_pos_list_.size(); i++)
     {
-        accelerate_pos_list_.at(i) -= 5;
+        accelerate_pos_list_.at(i) -= 4;
         if (accelerate_pos_list_.at(i) + rect_.w < 0)
         {
             accelerate_pos_list_.erase(accelerate_pos_list_.begin());

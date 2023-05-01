@@ -213,61 +213,9 @@ void Mechanism::DrawHighScore(Object &o_highscore_, SDL_Renderer *des, TTF_Font 
     o_highscore_.Free();
 }
 
-void Mechanism::ChangeGameState(bool &play_, bool &is_running_, bool &is_lose_, Object &o_lose_game_, SDL_Renderer *des)
+void Mechanism::ChangeGameState(bool &play_, bool &is_running_, bool &is_lose_)
 {
     is_running_ = false;
     is_lose_ = true;
     play_ = false;
-    
-    //o_lose_game_.RenderPos(150, 150, des);
-}
-
-void Mechanism::DrawLoseGame(SDL_Event &play_event_, bool &play_, bool &is_running_, bool &is_lose_, Object &o_lose_game_, SDL_Renderer *des)
-{
-    // if (play_)
-    // {
-    //     bool return_menu_ = false;
-    //     while (!return_menu_)
-    //     {
-    //         while (SDL_PollEvent(&play_event_))
-    //         {
-    //             if (play_event_.type == SDL_QUIT)
-    //             {
-    //                 return_menu_ = true;
-    //                 play_ = false;
-    //                 break;
-    //             }
-
-    //             if (play_event_.type == SDL_MOUSEBUTTONDOWN)
-    //             {
-
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    //o_lose_game_.Render(des);
-    // SDL_Texture *new_Texture = nullptr;
-    // SDL_Surface *load_surface = IMG_Load("res/menu/notification.png");
-    // if (load_surface != nullptr)
-    // {
-    //     // Xóa những cái background đằng sau ảnh của character (transparent)
-    //     //SDL_SetColorKey(load_surface, SDL_TRUE, SDL_MapRGB(load_surface->format, 0, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR));
-    //     new_Texture = SDL_CreateTextureFromSurface(des, load_surface);
-    //     if (new_Texture == nullptr)
-    //     {
-    //         cout << "Failed to create texture" << endl;
-    //         // Surface dang luu thong so anh
-    //     }
-
-    //     SDL_FreeSurface(load_surface);
-    // }
-    // else 
-    // {
-    //     cout << "Failed to load lose image!" << endl;
-    // }
-    //SDL_RenderPresent(des);
-    // SDL_RenderCopy(des, new_Texture, nullptr, nullptr);
-    // SDL_DestroyTexture(new_Texture);
 }

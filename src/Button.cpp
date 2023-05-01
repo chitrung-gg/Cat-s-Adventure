@@ -57,53 +57,9 @@ bool Button::IsInside(SDL_Event &event)
         SDL_GetMouseState(&x, &y);
 
         inside = (x >= button_object_.x) && (x <= button_object_.x + b_width_) && (y >= button_object_.y) && (y <= button_object_.y + b_height_);
-        // bool inside = true;
-        // if (x < position_.x)
-        // {
-        //     inside = false;
-        // }
-        // else if (x > position_.x + b_width_)
-        // {
-        //     inside = false;
-        // }
-        // else if (y < position_.y)
-        // {
-        //     inside = false;
-        // }
-        // else if (y > position_.y + b_height_)
-        // {
-        //     inside = false;
-        // }
-
-        // return inside;
     }
-    return inside;
-   
+    return inside;  
 }
-
-// void Button::HandleAction(SDL_Event &event)
-// {
-//     // transparency here
-//     if (IsInside(event))
-//     {
-//         switch (event.type)
-//         {
-//         case SDL_MOUSEMOTION: case SDL_MOUSEBUTTONUP: 
-//             mouse_state_ = HOVER;
-//             break;
-//         case SDL_MOUSEBUTTONDOWN:
-//             mouse_state_ = CLICK;
-//             break;
-        
-//         default:
-//             break;
-//         }
-//     }
-//     else 
-//     {
-//         mouse_state_ = NORMAL;
-//     }
-// }
 
 void Button::RenderButton(SDL_Renderer *des)
 {

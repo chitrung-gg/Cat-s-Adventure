@@ -455,7 +455,6 @@ int main(int argc, char *argv[])
             gReturnButton.SetPosition(GAME_RETURN_BUTTON_POS_X, GAME_RETURN_BUTTON_POS_Y);
             gReplayButton.SetPosition(REPLAY_BUTTON_POS_X, REPLAY_BUTTON_POS_Y);
             
-            srand(time(nullptr));
             int time = 0, score = 0, speed = 0;
             float acceleration = 0;
             int num_collision = 0, cnt_collision = 0;
@@ -465,10 +464,9 @@ int main(int argc, char *argv[])
 
             gCharacter.SetRect(PLAYER_POS_X, GROUND);
 
+            gGround0.GenerateEnemy();
             gGround1.GenerateEnemy();
             gAir0.GenerateEnemy();
-            gGround0.GenerateEnemy();
-            
             //gAir1.GenerateEnemy();
 
             gHeart.Init(gRenderer);
@@ -541,16 +539,16 @@ int main(int argc, char *argv[])
                     gPauseButton.RenderButton(gRenderer);
 
                     gCharacter.DoPlayer();
-                    gCharacter.Show(is_lose_, gRenderer);
+                    gCharacter.Show(gRenderer);
+
+                    gGround0.Move(acceleration);
+                    gGround0.Show(gRenderer);
 
                     gGround1.Move(acceleration);
                     gGround1.Show(gRenderer);
 
                     gAir0.Move(acceleration);
                     gAir0.Show(gRenderer);
-
-                    gGround0.Move(acceleration);
-                    gGround0.Show(gRenderer);
 
                     // gAir1.Move(acceleration);
                     // gAir1.Show(gRenderer);
@@ -569,9 +567,8 @@ int main(int argc, char *argv[])
                     {
                         gMusicDisable.RenderButton(gRenderer);
                     }
-
+                 
                     gPlayButton.RenderButton(gRenderer);
-
                 }
 
                 for (int i = 0; i < gSpeed.GetAccelerate().size(); i++)
@@ -584,13 +581,11 @@ int main(int argc, char *argv[])
         
                 if ((gMechanism.CheckCollision(gCharacter, gAir0) || gMechanism.CheckCollision(gCharacter, gGround0) /*|| gMechanism.CheckCollision(gCharacter, gAir1) */|| gMechanism.CheckCollision(gCharacter, gGround1)))
                 {
-                    cnt_collision++;
+                    if (!is_paused_) cnt_collision++;
                     
-                    if (cnt_collision % 15 == 0) 
+                    if (cnt_collision % 20 == 0) 
                     {
                         num_collision++;
-                        cout << 'a' << " " << cnt_collision << " " << num_collision << endl;
-
                         if (num_collision <= 3)
                         {
                             Mix_PlayChannel(CHUNK_CHANNEL, gCollide, NOT_REPEAT_SOUND);
@@ -598,21 +593,20 @@ int main(int argc, char *argv[])
                             gHeart.Show(gRenderer);
                         }
 
-                        // else 
-                        // {
-                        //     gTimer.Pause();
-                        //     if (!is_lose_)
-                        //     {
-                        //         Mix_PauseMusic();
-                        //         Mix_PlayChannel(CHUNK_CHANNEL, gLose, NOT_REPEAT_SOUND);
-                        //     }
-                        //     gMechanism.UpdateHighScore(score, "res/highscore.txt");
-                        //     gMechanism.ChangeGameState(play_, is_running_, is_lose_, gLoseGame, gRenderer); 
-                        //     break;
-                        // }
-
+                        else 
+                        {
+                            gTimer.Pause();
+                            if (!is_lose_)
+                            {
+                                Mix_PauseMusic();
+                                Mix_PlayChannel(CHUNK_CHANNEL, gLose, NOT_REPEAT_SOUND);
+                            }
+                            gMechanism.UpdateHighScore(score, "res/highscore.txt");
+                            gMechanism.ChangeGameState(play_, is_running_, is_lose_); 
+                            break;
+                        }
+                        cnt_collision = 0;
                     }
-                    
                 }
                 SDL_RenderPresent(gRenderer);
                 gMechanism.ControlFPS(gTimer);
@@ -642,7 +636,6 @@ int main(int argc, char *argv[])
                 }
                 
                 gMenu.RenderReplayButton(lose_event_, gReplayButton, gReturnButton, menu_quit_, play_, end_lose_, gSelect);
-
             }
 
             gLoseGame.RenderPos(190, 100, gRenderer);
@@ -652,7 +645,6 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(gRenderer);
         }
     }
-
     close();
     return 0;
 }

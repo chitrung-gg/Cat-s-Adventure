@@ -54,7 +54,6 @@ void Player::DoPlayer()
 
 bool Player::LoadImg(string path, SDL_Renderer *screen)
 {
-    player_timer_.Start();
     bool load = Object::LoadImg(path.c_str(), screen);
     if (load == true)
     {
@@ -88,7 +87,7 @@ int Player::GetFrameHeight()
     return height_frame_;
 }
 
-void Player::UpdateImagePlayer(bool &is_lose_, SDL_Renderer *des)
+void Player::UpdateImagePlayer(SDL_Renderer *des)
 {
     if (!GetGround())
     {
@@ -102,18 +101,11 @@ void Player::UpdateImagePlayer(bool &is_lose_, SDL_Renderer *des)
         p_object_ = nullptr;
         LoadImg("res/cat/Run.png", des);
     }
-
-    if (is_lose_)
-    {
-        SDL_DestroyTexture(p_object_);
-        p_object_ = nullptr;
-        LoadImg("res/cat/Dead.png", des);
-    }
 }
 
-void Player::Show(bool &is_lose_, SDL_Renderer *des)
+void Player::Show(SDL_Renderer *des)
 {
-    UpdateImagePlayer(is_lose_, des);
+    UpdateImagePlayer(des);
 
     player_object_.w = frame_clip_[frame_].w;
     player_object_.h = frame_clip_[frame_].h;

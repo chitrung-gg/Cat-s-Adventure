@@ -21,7 +21,6 @@ Enemy::~Enemy()
 bool Enemy::LoadImg(string path, SDL_Renderer *screen)
 {
     bool load = false;
-    enemy_timer_.Start();
     if (e_type_ == AIR_ENEMY_TYPE)
     {
         for (int i = 0; i < AIR_ENEMY; i++)
@@ -90,52 +89,34 @@ bool Enemy::LoadImg(string path, SDL_Renderer *screen)
     return load;
 }
 
-// bool Enemy::CheckEnemyCollision(Enemy &enemy_1_, Enemy &enemy_2_)
-// {
-//     if (SDL_HasIntersection(&enemy_1_.GetEnemyObject(), &enemy_2_.GetEnemyObject())) return true;
-// }
-
-void Enemy::AddEnemy(int &x_pos_)
-{
-    enemy_spawn_.push_back(x_pos_);
-}
-
 void Enemy::GenerateEnemy()
 {
-    enemy_object_.x = rand() % (ENEMY_RANGE + SCREEN_WIDTH - 400) + SCREEN_WIDTH;
     if (e_type_ == AIR_ENEMY_TYPE)
     {
+        enemy_object_.x = rand() % (ENEMY_POSITION_MAX_HELICOPTER - ENEMY_POSITION_MIN_HELICOPTER + 1) + (ENEMY_POSITION_MIN_HELICOPTER) + SCREEN_WIDTH;
         enemy_object_.y = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;  
-        // if (e_air_ == HELICOPTER)                                                                 
-        // {
-        //     enemy_object_.x = ENEMY_POSITION_MIN_HELICOPTER + SCREEN_WIDTH;
-        // }
-
-        // else if (e_air_ == VULTURE)
-        // {
-        //     enemy_object_.x = ENEMY_POSITION_MIN_VULTURE + SCREEN_WIDTH;
-        // }
+        //cout << "Helicopter: " << enemy_object_.x << " " << enemy_object_.y << endl;
     }
 
     else if (e_type_ == GROUND_ENEMY_TYPE)
     {
-        enemy_object_.y = GROUND + 5;
+        enemy_object_.y = GROUND;
 
-        // if (e_ground_ == CACTUS)
-        // {
-        //     enemy_object_.x = ENEMY_POSITION_MIN_CACTUS + SCREEN_WIDTH;
-        // }
+        if (e_ground_ == CACTUS)
+        {
+            enemy_object_.x = rand() % (ENEMY_POSITION_MAX_CACTUS - ENEMY_POSITION_MIN_CACTUS + 1) + (ENEMY_POSITION_MIN_CACTUS) + SCREEN_WIDTH;
+            //cout << "Cactus: " << enemy_object_.x << " " << endl;
+        }
 
-        // else if (e_ground_ == MUMMY)
-        // {
-        //     enemy_object_.x = ENEMY_POSITION_MIN_MUMMY + SCREEN_WIDTH;
-        // }
+        else if (e_ground_ == MUMMY)
+        {
+            enemy_object_.x = rand() % (ENEMY_POSITION_MAX_MUMMY - ENEMY_POSITION_MIN_MUMMY + 1) + (ENEMY_POSITION_MIN_MUMMY) + SCREEN_WIDTH;
+            //cout << "Mummy: " << enemy_object_.x << endl;
+        }
     }
-
-    AddEnemy(enemy_object_.x);
 }
 
-void Enemy::Move(const int &accelerate)
+void Enemy::Move(const float &accelerate)
 {
     if (e_type_ == AIR_ENEMY_TYPE)
     {
@@ -163,39 +144,8 @@ void Enemy::Move(const int &accelerate)
     
     if (enemy_object_.x + enemy_object_.w < 0)
     {
-        enemy_object_.x = rand() % (ENEMY_RANGE + SCREEN_WIDTH - 500) + SCREEN_WIDTH;
-        if(e_type_ == AIR_ENEMY_TYPE)
-        {   
-            enemy_object_.y = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;
-            // if (e_air_ == HELICOPTER)
-            // {
-            //     enemy_object_.x = ENEMY_POSITION_MIN_HELICOPTER + SCREEN_WIDTH;
-            // }
-            // else if (e_air_ == VULTURE)
-            // {    
-            //     enemy_object_.x = ENEMY_POSITION_MIN_VULTURE + SCREEN_WIDTH;
-            // } 
-        }
-
-        else if (e_type_ == GROUND_ENEMY_TYPE)
-        {
-            // if (e_ground_ == CACTUS)
-            // {
-            //     enemy_object_.x = ENEMY_POSITION_MIN_CACTUS + SCREEN_WIDTH;
-            // }
-            // else if (e_ground_ == MUMMY)
-            // {
-            //     enemy_object_.x = ENEMY_POSITION_MIN_MUMMY + SCREEN_WIDTH;
-            // }
-        }
+        GenerateEnemy();
     }
-
-    AddEnemy(enemy_object_.x);
-}
-
-void Enemy::Ignore()
-{
-    enemy_spawn_.pop_back();
 }
 
 void Enemy::Show(SDL_Renderer *des)
@@ -222,7 +172,6 @@ void Enemy::Show(SDL_Renderer *des)
             block_sprites_++;
             break;
         }
-
         SDL_RenderCopy(des, p_object_, &frame_clip_[id_frame_], &enemy_object_);
     }
 
@@ -235,7 +184,7 @@ void Enemy::Show(SDL_Renderer *des)
         {
             while (true)
             {
-                if (block_sprites_ % 5 == 0)
+                if (block_sprites_ % 6 == 0)
                 {
                     id_frame_++;
                 }
@@ -251,7 +200,6 @@ void Enemy::Show(SDL_Renderer *des)
                 break;
             }
         }
-
         SDL_RenderCopy(des, p_object_, &frame_clip_[id_frame_], &enemy_object_);
     }
 }
