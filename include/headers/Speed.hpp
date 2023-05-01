@@ -4,10 +4,10 @@
 #include "CommonFunction.hpp"
 #include "Object.hpp"
 
-const int ACCELERATE_POS_1 = 2200;
-const int ACCELERATE_POS_2 = 3000;
-const int ACCELERATE_POS_3 = 3750;
-const int ACCELERATE_POS_4 = 5000;
+const int ACCELERATE_POS_1 = 10000;
+const int ACCELERATE_POS_2 = 30000;
+const int ACCELERATE_POS_3 = 50000;
+const int ACCELERATE_POS_4 = 100000;
 
 class Speed: public Object
 {

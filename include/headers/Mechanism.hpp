@@ -32,9 +32,7 @@ class Mechanism
         void UpdateHighScore(const int &score, string path);
         void DrawScore(Object &o_score_, Timer &o_timer_, SDL_Renderer *des, TTF_Font *font, SDL_Color color, int &time, float &acceleration, int &score);
         void DrawHighScore(Object &o_highscore_, /*Timer &o_timer_ */ SDL_Renderer *des, TTF_Font *font, SDL_Color color);
-        void ChangeGameState(bool &play_, bool &is_running_, bool &is_lose_, Object &o_lose_game_, SDL_Renderer *des);
-        void DrawLoseGame(SDL_Event &play_event_, bool &play_, bool &is_running_, bool &is_lose_, Object &o_lose_game_, SDL_Renderer *des);
-
+        void ChangeGameState(bool &play_, bool &is_running_, bool &is_lose_);
     private:
 
 };

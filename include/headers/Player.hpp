@@ -3,7 +3,6 @@
 
 #include "CommonFunction.hpp"
 #include "Object.hpp"
-#include "Timer.hpp"
 
 enum PLAYER_ACTION
 {
@@ -25,8 +24,8 @@ class Player : public Object
 
         int GetFrameWidth();
         int GetFrameHeight();
-        void UpdateImagePlayer(bool &is_lose_, SDL_Renderer *des);
-        void Show(bool &is_lose_, SDL_Renderer *des);
+        void UpdateImagePlayer(SDL_Renderer *des);
+        void Show(SDL_Renderer *des);
         
         SDL_Rect GetPlayerObject();
 
@@ -37,9 +36,7 @@ class Player : public Object
         double p_jump_;
         int width_frame_;
         int height_frame_;
-        Timer player_timer_;
         int block_sprites_;
-       
 };
 
 #endif

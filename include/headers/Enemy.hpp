@@ -3,9 +3,8 @@
 
 #include "CommonFunction.hpp"
 #include "Object.hpp"
-#include "Timer.hpp"
 
-const int ENEMY_SPEED = 3;
+const int ENEMY_SPEED = 4;
 const int MAX_ENEMY_FRAMES = 5;
 const int AIR_ENEMY_TYPE = 1;
 const int GROUND_ENEMY_TYPE = 2;
@@ -32,17 +31,17 @@ const int ENEMY_RANGE = 225;
 const int ENEMY_MIN_HEIGHT = 270;
 const int ENEMY_MAX_HEIGHT = 330;
 
-const int ENEMY_POSITION_MIN_HELICOPTER = 323;
-const int ENEMY_POSITION_MAX_HELICOPTER = 337;
+const int ENEMY_POSITION_MIN_HELICOPTER = 420;
+const int ENEMY_POSITION_MAX_HELICOPTER = 435;
 
-const int ENEMY_POSITION_MIN_VULTURE = 123;
-const int ENEMY_POSITION_MAX_VULTURE = 137;
+const int ENEMY_POSITION_MIN_VULTURE = 120;
+const int ENEMY_POSITION_MAX_VULTURE = 135;
 
-const int ENEMY_POSITION_MIN_CACTUS = 23;
-const int ENEMY_POSITION_MAX_CACTUS = 37;
+const int ENEMY_POSITION_MIN_CACTUS = 150;
+const int ENEMY_POSITION_MAX_CACTUS = 165;
 
-const int ENEMY_POSITION_MIN_MUMMY = 123;
-const int ENEMY_POSITION_MAX_MUMMY = 137;
+const int ENEMY_POSITION_MIN_MUMMY = 280;
+const int ENEMY_POSITION_MAX_MUMMY = 295;
 
 const int GROUND_HEIGHT = 18;
 
@@ -66,11 +65,8 @@ class Enemy : public Object
 
         bool LoadImg(string path, SDL_Renderer *screen);
         void GenerateEnemy();
-        void AddEnemy(int &x_pos_);
-        void Move(const int &acceleration);
+        void Move(const float &acceleration);
         void Show(SDL_Renderer *des);
-        void Ignore();
-        //bool CheckEnemyCollision(Enemy &enemy_1_, Enemy &enemy_2_);
 
         int GetEnemyType();
         int GetAirEnemyType();
@@ -85,9 +81,7 @@ class Enemy : public Object
         int width_frame_;
         int height_frame_;
         SDL_Rect frame_clip_[MAX_ENEMY_FRAMES];
-        Timer enemy_timer_;
         int block_sprites_;
-        vector<int> enemy_spawn_;
 };
 
 #endif

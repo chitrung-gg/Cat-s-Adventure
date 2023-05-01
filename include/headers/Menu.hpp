@@ -6,22 +6,6 @@
 #include "Button.hpp"
 #include "Mechanism.hpp"
 
-/*
--mảng sdl rect 
-- set các vị trí của sdl rect
-- Kiẻu dữ liệu button gồm tất 
-- Vòng trong loop của main menu
-+ Load background dằng sau
-+ Gọi button (Loadimg)
-+  Vòng lặp sự kiện 
-.switch (event.type)
-..case SDL_Quit
-..case SDL_MouseMotion (inside true thì render khác)
-- dùng menu trước while (is_quit)
-- SDL_RenderPresent thay thees SDL_Flip
-
-*/
-
 class Menu
 {
     public:

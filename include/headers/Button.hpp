@@ -54,7 +54,6 @@ class Button : public Object
         void SetPosition(int x, int y);
         void SetMouseState(const int &state_);
         bool IsInside(SDL_Event &event);
-        //void HandleAction(SDL_Event &event);
         void RenderButton(SDL_Renderer *des);
 
         SDL_Rect GetButtonRect();

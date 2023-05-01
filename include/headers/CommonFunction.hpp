@@ -54,7 +54,7 @@ const float LAYER_GROUND_SPEED = 2;
 const int FPS = 60;
 
 #define PLAYER_POS_X 100
-#define GROUND 455
+#define GROUND 452
 #define MAX_JUMP 15
 #define FALL_SPEED 0.675
 #define INIT_SPEED 0
